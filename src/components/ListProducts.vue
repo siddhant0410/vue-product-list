@@ -8,7 +8,6 @@ const data = ref<Product[]>([])
 onMounted(async () => {
 	data.value = await downloadProductList()
 })
-
 </script>
 
 <template>
