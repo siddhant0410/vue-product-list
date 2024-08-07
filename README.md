@@ -1,9 +1,10 @@
 # List products
 
 ## Get Started
-- Make sure you have `pnpm` installed
+- Make sure you have [pnpm](https://pnpm.io/installation) installed
 - Run `pnpm install` from this directory to install all dependencies
 - Run `pnpm dev` from this directory to start a test server
+- Run `pnpm test` to run all tests
 
 ## Tasks to do
  1. Display the products in some kind of list
