@@ -1,3 +1,14 @@
+<script setup lang="ts">
+import { Product } from "../types/product-types";
+import ProductRow from "./ProductRow.vue";
+
+const props = defineProps<{
+  products: Product[];
+  categoryColors: { [key: string]: string };
+  sortOrder: string;
+}>();
+</script>
+
 <template>
   <div class="max-w-6xl mx-auto">
     <!-- Product table -->
@@ -27,12 +38,3 @@
     </table>
   </div>
 </template>
-
-<script setup lang="ts">
-import ProductRow from "./ProductRow.vue";
-const props = defineProps({
-  products: Array,
-  categoryColors: Object,
-  sortOrder: String,
-});
-</script>

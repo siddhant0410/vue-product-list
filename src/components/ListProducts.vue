@@ -5,20 +5,10 @@
       class="max-w-6xl mx-auto mb-4 bg-purple-100 border border-gray-300 rounded-lg p-4"
     >
       <div class="flex justify-between items-center">
-        <!-- Input to set the maximum price for filtering -->
-        <div class="flex items-center space-x-4">
-          <label for="max-price" class="text-lg font-semibold"
-            >Show products below the price:</label
-          >
-          <input
-            id="max-price"
-            type="number"
-            v-model="maxPrice"
-            class="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring focus:border-blue-300"
-          />
-        </div>
+        <!-- PriceFilter component: Allows the user to filter products by price -->
+        <PriceFilter @filterPrice="setMaxPrice" />
 
-        <!-- Button to sort by price -->
+        <!-- Button to sort products by price: Toggles between ascending and descending -->
         <button
           @click="toggleSortByPrice"
           class="px-4 py-2 bg-purple-500 text-white rounded-md shadow-md hover:bg-purple-600 transition"
@@ -28,7 +18,7 @@
       </div>
     </div>
 
-    <!-- Product Table -->
+    <!-- Product Table: Displays the filtered and sorted list of products -->
     <ProductTable
       :products="productsPostFilter"
       :categoryColors="categoryColors"
@@ -44,25 +34,25 @@ import { ref, computed, onMounted } from "vue";
 import {
   fetchProductList,
   filterProductsByPrice,
+  generateColorFromCategory,
 } from "../services/product-service";
 import ProductTable from "./ProductTable.vue";
+import PriceFilter from "./PriceFilter.vue";
+import { Product } from "../types/product-types";
 
-const data = ref([]);
+// 'data' holds the full product list fetched from the API
+const data = ref<Product[]>([]);
+
+// Controls the sort order (asc or desc) for the price sorting
 const sortOrder = ref("asc");
+
+// 'maxPrice' holds the user-set maximum price for filtering products
 const maxPrice = ref<number>(100);
+
+// Holds the background colors for each product category
 const categoryColors = ref<{ [key: string]: string }>({});
 
-const generateColorFromCategory = (category: string) => {
-  let hash = 0;
-  for (let i = 0; i < category.length; i++) {
-    hash = category.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const hue = Math.abs(hash) % 360;
-  const saturation = 40 + (hash % 20);
-  const lightness = 85 - (hash % 15);
-  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-};
-
+// This function assigns a background color to each category using the 'generateColorFromCategory' utility
 const setCategoryColors = (products: any[]) => {
   products.forEach((product) => {
     if (!categoryColors.value[product.category]) {
@@ -73,31 +63,40 @@ const setCategoryColors = (products: any[]) => {
   });
 };
 
+// Fetch product data when the component is mounted
 onMounted(async () => {
   data.value = await fetchProductList();
-  setCategoryColors(data.value);
+  setCategoryColors(data.value); // Assign colors to categories
 });
 
+// Delete a product from the list by its ID
 const deleteProduct = (id: number) => {
+  // Filter out the deleted product and update the list
   data.value = data.value.filter((product) => product.id !== id);
-  setCategoryColors(data.value);
+  setCategoryColors(data.value); // Recompute category colors after deletion
 };
 
+// Toggle the sort order between ascending and descending, and sort the products by price
 const toggleSortByPrice = () => {
   if (sortOrder.value === "asc") {
+    // Sort in ascending order
     data.value.sort((a, b) => a.price - b.price);
     sortOrder.value = "desc";
   } else {
+    // Sort in descending order
     data.value.sort((a, b) => b.price - a.price);
     sortOrder.value = "asc";
   }
+  // Store the sort order in localStorage to maintain state on reload
   localStorage.setItem("sortOrder", sortOrder.value);
 };
 
+// Set the maximum price for filtering products
 const setMaxPrice = (price: number) => {
   maxPrice.value = price;
 };
 
+// Filter the products by the max price set by the user
 const productsPostFilter = computed(() => {
   return filterProductsByPrice(data.value, maxPrice.value);
 });

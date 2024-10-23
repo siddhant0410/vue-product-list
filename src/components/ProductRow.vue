@@ -20,13 +20,17 @@
 
 <script setup lang="ts">
 import DeleteProduct from "./DeleteProduct.vue";
-const props = defineProps({
-  product: Object,
-  backgroundColor: String, // Accept the background color as a prop
-});
+import { Product } from "../types/product-types";
+
+// Props for product data and background color
+const props = defineProps<{
+  product: Product;
+  backgroundColor: string;
+}>();
 
 const emit = defineEmits(["deleteProduct"]);
 
+// Emit deleteProduct event with the product id
 const onDeleteProduct = (id: number) => {
   emit("deleteProduct", id);
 };
