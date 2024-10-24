@@ -3,7 +3,7 @@ import type { Product } from "../types/product-types";
 // Fetch the first 100 products from the API
 export const fetchProductList = async (): Promise<Product[]> => {
   try {
-    const response = await fetch("https://dummyjson.com/products?limit=100");
+    const response = await fetch(`https://dummyjson.com/products?limit=${productLimit}`);
     
     // Check if the response is valid
     if (!response.ok) {
@@ -38,3 +38,6 @@ export const generateColorFromCategory = (category: string) => {
   const lightness = 85 - (hash % 15);
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 };
+
+
+export const productLimit = 100;
